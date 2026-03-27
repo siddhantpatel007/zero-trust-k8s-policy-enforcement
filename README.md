@@ -8,23 +8,6 @@ A Python-based security auditing and automated remediation system that enforces 
 
 ---
 
-## Architecture
-INPUT                    AUDIT ENGINE              DECISION                 REMEDIATION & OUTPUT
-┌─────────────┐    ┌──────────────────────┐   ┌─────────────────┐    ┌──────────────────────┐
-│ baseline.yaml│───▶│  RBAC Auditor        │──▶│ Risk Classifier │───▶│ Auto Remediation     │
-│ (Zero Trust  │    │  Network Auditor     │   │ (CRIT/HIGH/     │    │ (LOW/MED via K8s API)│
-│  Policy)     │    │  Trust Auditor       │   │  MED/LOW)       │    ├──────────────────────┤
-├─────────────┤    │  Secrets Auditor     │   ├─────────────────┤    │ Human Review Queue   │
-│ K8s Cluster  │───▶│                      │   │ Compliance      │    │ (HIGH/CRIT flagged)  │
-│ (Minikube +  │    │  + Framework Mapping │   │ Scorer          │    ├──────────────────────┤
-│  Calico CNI) │    │  (NIST/ISO/CIS)      │   │ (Weighted %)    │    │ YAML Manifests       │
-├─────────────┤    └──────────────────────┘   └─────────────────┘    │ (Ready-to-apply)     │
-│ Test         │                                                      ├──────────────────────┤
-│ Namespaces   │                                                      │ HTML Dashboard       │
-│ (secure/     │                                                      │ + JSON Report        │
-│  insecure)   │                                                      └──────────────────────┘
-└─────────────┘
-
 ## Features
 
 - **4 Specialized Auditors** — RBAC, Network Policy, Workload Trust, and Secret Management
