@@ -100,37 +100,6 @@ NIST 800-53: 15 controls checked
 ISO 27001:   10 controls checked
 CIS Benchmark: 8 checks covered
 
-## Project Structure
-zero-trust-k8s-policy-enforcement/
-├── main.py                      # Entry point — orchestrates full audit pipeline
-├── config.py                    # Loads baseline.yaml and K8s API clients
-├── baseline.yaml                # Formal Zero Trust policy definition
-├── risk_classifier.py           # Severity scoring and violation classification
-├── compliance_scorer.py         # Weighted compliance percentage calculator
-├── framework_mapping.py         # NIST 800-53 and ISO 27001 control mappings
-├── cis_benchmark.py             # CIS Kubernetes Benchmark mappings
-├── manifest_generator.py        # YAML remediation manifest generator
-├── human_review.py              # Human review queue for HIGH/CRITICAL
-├── report_generator.py          # JSON + HTML dashboard report generator
-├── requirements.txt             # Python dependencies
-├── auditors/
-│   ├── rbac_auditor.py          # RBAC violation detection
-│   ├── network_auditor.py       # Network policy violation detection
-│   ├── trust_auditor.py         # Workload security violation detection
-│   └── secrets_auditor.py       # Secret management violation detection
-├── remediation/
-│   └── auto_remediator.py       # Automated fix application via K8s API
-├── k8s-manifests/
-│   ├── bad-pod.yaml             # Intentionally insecure test pod
-│   ├── good-pod.yaml            # Properly secured test pod
-│   ├── bad-rbac.yaml            # Over-permissioned RBAC binding
-│   ├── secure-network-policy.yaml  # Zero Trust network policies
-│   └── test-secrets.yaml        # Insecure secret test resources
-├── reports/                     # Generated audit reports (gitignored)
-│   └── manifests/               # Generated YAML fix files (gitignored)
-└── docs/
-└── research-paper.pdf       # Project research paper
-
 ## Tech Stack
 
 | Component | Technology |
