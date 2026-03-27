@@ -1,0 +1,15 @@
+# bad-rbac.yaml
+# BAD: Gives cluster-admin (GOD MODE) to the default service account
+# In a real environment, this would be extremely dangerous
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: insecure-admin-binding
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: test-insecure
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io

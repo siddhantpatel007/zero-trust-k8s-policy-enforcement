@@ -1,0 +1,35 @@
+# Python virtual environment (large, not needed in repo)
+venv/
+env/
+.venv/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Generated reports (these are output, not source code)
+reports/*.json
+reports/*.html
+reports/manifests/*.yaml
+reports/human_review_*.json
+
+# Keep the reports directory but not its contents
+!reports/.gitkeep
+!reports/manifests/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Minikube and Kubernetes local config
+.kube/
+.minikube/

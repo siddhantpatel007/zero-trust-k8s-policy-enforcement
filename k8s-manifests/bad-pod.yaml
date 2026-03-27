@@ -1,0 +1,27 @@
+# bad-pod.yaml
+# This pod violates EVERY Zero Trust principle on purpose
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-pod
+  namespace: test-insecure
+  labels:
+    app: bad-pod
+    security-test: "insecure"
+spec:
+  # BAD: Auto-mounts the service account token (gives K8s API access)
+  automountServiceAccountToken: true
+  containers:
+    - name: bad-container
+      image: nginx:latest
+      # BAD: Runs in privileged mode (full host access)
+      securityContext:
+        privileged: true
+        # BAD: Runs as root user
+        runAsUser: 0
+        # BAD: Allows privilege escalation
+        allowPrivilegeEscalation: true
+        # BAD: Writable root filesystem
+        readOnlyRootFilesystem: false
+      # BAD: No resource limits defined
+      # (intentionally omitted — this is a violation)

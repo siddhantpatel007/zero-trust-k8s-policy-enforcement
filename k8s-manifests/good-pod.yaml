@@ -1,0 +1,48 @@
+# good-pod.yaml
+# This pod follows all Zero Trust best practices
+apiVersion: v1
+kind: Pod
+metadata:
+  name: good-pod
+  namespace: test-secure
+  labels:
+    app: good-pod
+    security-test: "secure"
+spec:
+  # GOOD: Don't auto-mount service account token
+  automountServiceAccountToken: false
+  containers:
+    - name: good-container
+      image: nginx:latest
+      securityContext:
+        # GOOD: Not privileged
+        privileged: false
+        # GOOD: Runs as non-root user (UID 1000)
+        runAsUser: 1000
+        # GOOD: Cannot escalate privileges
+        allowPrivilegeEscalation: false
+        # GOOD: Read-only filesystem
+        readOnlyRootFilesystem: true
+      # GOOD: Resource limits are defined
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "100m"
+        limits:
+          memory: "128Mi"
+          cpu: "250m"
+      # Nginx needs to write to some dirs, so mount writable tmpfs volumes
+      volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /var/cache/nginx
+        - name: run
+          mountPath: /var/run
+  volumes:
+    - name: tmp
+      emptyDir: {}
+    - name: cache
+      emptyDir: {}
+    - name: run
+      emptyDir: {}

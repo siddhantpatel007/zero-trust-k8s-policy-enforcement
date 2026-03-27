@@ -1,0 +1,88 @@
+# baseline.yaml
+# Zero Trust Policy Baseline - Defines what is and isn't allowed
+
+# ============================================================
+# RBAC POLICIES (Role-Based Access Control)
+# ============================================================
+# RBAC controls WHO can do WHAT in the cluster.
+# In Zero Trust, we follow "least privilege" — give minimum permissions needed.
+
+rbac:
+  # These ClusterRoles should NEVER be bound to regular service accounts
+  # cluster-admin has full access to everything — very dangerous
+  prohibited_cluster_roles:
+    - cluster-admin
+
+  # Wildcard (*) means "everything" — this is too broad for Zero Trust
+  # Example of bad RBAC: "verbs: ['*']" means allow ALL actions
+  prohibited_wildcards: true
+
+  # automountServiceAccountToken automatically gives every pod a token
+  # to access the Kubernetes API. Most pods don't need this.
+  # Setting this to false means pods must explicitly request API access.
+  allow_automount_token: false
+
+  # Maximum number of ClusterRoleBindings allowed
+  # (ClusterRoleBindings give permissions across ALL namespaces)
+  max_cluster_role_bindings: 10
+
+# ============================================================
+# NETWORK POLICIES
+# ============================================================
+# Network policies control which pods can communicate with each other.
+# In Zero Trust, the default is DENY ALL — then you explicitly allow
+# only the connections that are needed.
+
+network:
+  # Every namespace MUST have a default-deny policy
+  # This means: block all traffic unless explicitly allowed
+  require_default_deny: true
+
+  # Every namespace must have explicit ingress (incoming) rules
+  require_ingress_rules: true
+
+  # Every namespace must have explicit egress (outgoing) rules
+  require_egress_rules: true
+
+  # Pods should not be able to talk to any pod in any namespace freely
+  deny_all_default: true
+
+# ============================================================
+# TRUST / WORKLOAD POLICIES
+# ============================================================
+# These control how individual containers/pods are configured.
+# In Zero Trust, we assume every workload could be compromised,
+# so we restrict what they can do.
+
+trust:
+  # Containers must NOT run as root (UID 0)
+  # Root inside a container can potentially escape to the host
+  allow_root: false
+
+  # Privileged mode gives a container almost full access to the host
+  # This completely breaks container isolation — never allow in Zero Trust
+  allow_privileged: false
+
+  # Every container MUST have resource limits (CPU and memory)
+  # Without limits, one container could consume all resources (DoS attack)
+  require_resource_limits: true
+
+  # Containers should use read-only root filesystems
+  # This prevents attackers from writing malicious files
+  require_read_only_root_fs: true
+
+  # Containers should not allow privilege escalation
+  # This prevents a process from gaining more privileges than its parent
+  allow_privilege_escalation: false
+
+# ============================================================
+# RISK SCORING
+# ============================================================
+# When a violation is found, it gets a severity score.
+# Higher score = more dangerous. These are the point values.
+
+scoring:
+  CRITICAL: 100    # Immediate security threat (e.g., cluster-admin bound to pod)
+  HIGH: 50         # Serious issue (e.g., privileged container)
+  MEDIUM: 20       # Moderate concern (e.g., missing network policy)
+  LOW: 5           # Minor issue (e.g., missing resource limits)
